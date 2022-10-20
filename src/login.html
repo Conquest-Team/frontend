@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Conquest - Login </title>
+        <link rel="stylesheet" href="css/style.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <div class="main">
+            <div class="middle">
+                <h1>login</h1>
+                <p></p>login with your melon.rest credentials</p>
+                username: <input type="text" id="username"><br>
+                password: <input type="password" id="password"><br><br>
+                <button id="authenicate" class="button">authenicate</button>
+            </div>
+        </div>
+        <script type="module">
+            if(localStorage.getItem("token")) {
+                document.body.style.visibility = "hidden";
+
+                const tokenRequest = await fetch("https://api.melon.rest/api/v1/@me/info", {
+                    headers: {
+                        "x-token": localStorage.getItem("token")
+                    }
+                })    
+
+                if(!tokenRequest.ok) {
+                    localStorage.removeItem("token");
+                    location.reload()
+                } else {
+                    location = "game.html";
+                }
+            }
+            
+            document.getElementById("authenicate").addEventListener("click", async () => {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                if(username && password) {
+                    const loginRequest = await fetch("https://api.melon.rest/api/v1/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username, password
+                        })
+                    })
+                    const json = await loginRequest.json();
+
+                    if(!loginRequest.ok) {
+                        alert(json.message);
+                        return;
+                    } 
+
+                    location = "game.html"
+                    localStorage.setItem("token", json.token);
+                }
+            })
+        </script>
+    </body>
+</html>
