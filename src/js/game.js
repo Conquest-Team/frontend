@@ -34,7 +34,7 @@ function adjust(color, amount) {
 function style(feature) {
     let style = {
         stroke: true,
-        fill: true,
+        fill: false,
         fillColor: 'rgb(51, 46, 46)',
         fillOpacity: 0.4,
         color: "blueviolet"
@@ -42,6 +42,12 @@ function style(feature) {
     
     let claim = claimed.find(x => x.iso == feature.properties.iso_a3);
 
+    if(feature.properties.featurecla.includes("Admin-1")) {
+        style.color = "grey";
+        //style.fillColor = adjust("#"+((""+feature.properties.diss_me).split("").join(0).slice(0, 6)), 200);
+        // the problem here is this has to be properly implemented so tthey don't overlap
+    }
+    
     if(claim) {
         style.fillColor = claim.color;
         style.color = adjust(claim.color, -90)
